@@ -2,9 +2,29 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
-		// Tasks
+		jshint: {
+			options: {
+				curly: true,
+				eqeqeq: true,
+				eqnull: true,
+				browser: true,
+				globals: {
+					jQuery: true
+				}
+			},
+			uses_defaults: ['js/*.js'],
+			with_overrides: {
+				options: {
+					curly: false,
+					undef: true
+				},
+				files: {
+					src: ['js/*.js']
+				}
+			}
+		},
+
 		sass: {
-			// Begin Sass Plugin
 			dist: {
 				options: {
 					sourcemap: 'none'
@@ -22,7 +42,6 @@ module.exports = function(grunt) {
 		},
 
 		postcss: {
-			// Begin Post CSS Plugin
 			options: {
 				map: false,
 				processors: [
@@ -37,7 +56,6 @@ module.exports = function(grunt) {
 		},
 
 		cssmin: {
-			// Begin CSS Minify Plugin
 			target: {
 				files: [
 					{
@@ -52,15 +70,13 @@ module.exports = function(grunt) {
 		},
 
 		uglify: {
-			// Begin JS Uglify Plugin
 			build: {
 				src: ['js/*.js'],
-				dest: 'build/js/script.min.js'
+				dest: 'build/js/main.min.js'
 			}
 		},
 
 		watch: {
-			// Compile everything into one task with Watch Plugin
 			css: {
 				files: '**/*.scss',
 				tasks: ['sass', 'postcss', 'cssmin']
@@ -71,7 +87,9 @@ module.exports = function(grunt) {
 			}
 		}
 	});
+
 	// Load Grunt plugins
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-postcss');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -79,5 +97,5 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Register Grunt tasks
-	grunt.registerTask('default', ['watch']);
+	grunt.registerTask('default', ['watch', 'jshint:uses_defaults']);
 };
