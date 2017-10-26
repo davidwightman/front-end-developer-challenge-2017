@@ -52,6 +52,7 @@ function validateEmail(email) {
 	}
 }
 
+//
 // If State value is equal to NY, CA, or MA - show a message on submit saying that we are unable to ship wine to those states and hide submit button. If different state is chosen, onblur - check against eligible states and if can ship to then re-enable submit button.
 //show submit button after user reselects a state. Hides Alert.
 function doWeShip(value) {
