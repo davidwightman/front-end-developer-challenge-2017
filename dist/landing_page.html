@@ -19,6 +19,14 @@
 <body>
 
 <h1>Landing Page Form - Front-End Developer Test</h1>
+<ul class="promotion-list-container"></ul>
+
+<script id="promotionTemplate" type="text/x-handlebars-template">
+	<li>
+		<p>{{smallImage}}
+		</p>
+	</li>
+</script>
 
 	<form name="product-form" action="" method="post" id="formId">
 
@@ -160,6 +168,7 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
     
+    	 <script src="js/handlebars.js"></script>
         <script src="js/main.js"></script>
 
 		<script>

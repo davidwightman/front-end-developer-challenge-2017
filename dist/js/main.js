@@ -48,6 +48,23 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	//promotion
+	var $promotionTemplate = $('#promotionTemplate').html();
+	console.log('prTemp', $promotionTemplate);
+
+	$.ajax({
+		type: 'GET',
+		url: 'https://www.wsjwine.com/api/offer/9183007',
+		success: function(data) {
+			console.log('sucess', data.response.mainItems[0].product.smallImage);
+
+			var $compiledPromotionTemplate = Handlebars.compile($promotionTemplate);
+
+			$('.promotion-list-container').html($compiledPromotionTemplate(data.response.mainItems[0].product));
+		}
+	});
+
 	//https://www.wsjwine.com/api/address/zipcode/11201
 
 	// $('.application-form').submit(function(e)
