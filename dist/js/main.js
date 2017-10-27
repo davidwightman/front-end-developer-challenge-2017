@@ -8,6 +8,48 @@ $(document).ready(function() {
 		$('#shipping-company').show(1000);
 	});
 
+	var $state = $('#stateId');
+	var $city = $('#city');
+	var $zip = $('#zip');
+
+	$zip.on('input', function() {
+		//console.log(dInput);
+		var zipLength = this.selectionEnd;
+		console.log(zipLength);
+		//$(".dDimension:contains('" + dInput + "')").css("display","block");
+
+		if (zipLength === 5) {
+			$.ajax({
+				type: 'GET',
+				url: 'https://www.wsjwine.com/api/address/zipcode/' + $zip.val(),
+				success: function(data) {
+					console.log('sucess', data);
+					//if ($zip.val().toString.length >= 5)
+
+					$zip.on('input', function() {
+						var dInput = this.value;
+						console.log(dInput);
+
+						//$(".dDimension:contains('" + dInput + "')").css("display","block");
+					});
+
+					$zip.change(function() {
+						$city.val('');
+
+						$city.val($city.val() + data.response.city);
+						$state.val(data.response.stateCode);
+					});
+					//$city.val.append('hello');
+
+					// $.each(zips, function(i, zip) {
+					// 	$zips.append('<div> +zip.response.zipCode');
+					// });
+				}
+			});
+		}
+	});
+	//https://www.wsjwine.com/api/address/zipcode/11201
+
 	// $('.application-form').submit(function(e)
 	//     {
 	//         e.preventDefault();

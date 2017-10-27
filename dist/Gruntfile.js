@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 						expand: true,
 						cwd: 'sass',
 						src: ['**/*.scss'],
-						dest: 'build/css',
+						dest: 'css',
 						ext: '.css'
 					}
 				]
@@ -56,18 +56,41 @@ module.exports = function(grunt) {
 		},
 
 		cssmin: {
+			options: {
+				keepSpecialComments: 0
+			},
+			minify: {
+				expand: true,
+				cwd: 'css',
+				src: ['*.css', '!*.min.css', '*.scss'],
+				dest: 'build/css',
+				ext: '.min.css'
+			},
 			target: {
-				files: [
-					{
-						expand: true,
-						cwd: 'css',
-						src: ['*.css', '!*.min.css'],
-						dest: 'build/css',
-						ext: '.min.css'
-					}
-				]
+				files: {
+					'build/css/main.min.css': ['css/main.css', 'css/normalize.css', 'sassmain.css']
+				}
 			}
 		},
+
+		// cssmin: {
+		// 	target: {
+		// 		files: [
+		// 			{
+		// 				expand: true,
+		// 				cwd: 'css',
+		// 				src: ['*.css', '!*.min.css', '*.scss'],
+		// 				dest: 'build/css',
+		// 				ext: '.min.css'
+		// 			}
+		// 		],
+		// 		combine: {
+		// 			files: {
+		// 				'build/css/main.min.css': ['css/main.css', 'css/normalize.css', 'sassmain.css']
+		// 			}
+		// 		}
+		// 	}
+		// },
 
 		uglify: {
 			build: {
@@ -78,7 +101,7 @@ module.exports = function(grunt) {
 
 		watch: {
 			css: {
-				files: '**/*.scss',
+				files: ['**/*.scss', '**/*.css'],
 				tasks: ['sass', 'postcss', 'cssmin']
 			},
 			js: {
