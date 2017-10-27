@@ -50,8 +50,8 @@ $(document).ready(function() {
 	});
 
 	//promotion
-	var $promotionTemplate = $('#promotionTemplate').html();
-	console.log('prTemp', $promotionTemplate);
+	var promotionTemplate = $('#promotionTemplate').html();
+	console.log('prTemp', promotionTemplate);
 
 	$.ajax({
 		type: 'GET',
@@ -59,9 +59,9 @@ $(document).ready(function() {
 		success: function(data) {
 			console.log('sucess', data.response.mainItems[0].product.smallImage);
 
-			var $compiledPromotionTemplate = Handlebars.compile($promotionTemplate);
+			var compiledPromotionTemplate = Handlebars.compile(promotionTemplate);
 
-			$('.promotion-list-container').html($compiledPromotionTemplate(data.response.mainItems[0].product));
+			$('.promotion-list-container').html(compiledPromotionTemplate(data.response));
 		}
 	});
 

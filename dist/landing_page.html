@@ -22,10 +22,17 @@
 <ul class="promotion-list-container"></ul>
 
 <script id="promotionTemplate" type="text/x-handlebars-template">
-	<li>
-		<p>{{smallImage}}
-		</p>
+	{{#each mainItems}}
+	<li class='mainItem'>
+
+		<img src="https://www.wsjwine.com/api/offer/9183007" + {{product.smallImage}}>
+		<p>Name: {{product.name}}</p>
+		<p>Colour name: {{product.colourName}}</p>
+		<p>Item Code: {{itemCode}}</p>
+		<p>List Price: {{listPrice}}</p>
 	</li>
+	{{/each}}
+	
 </script>
 
 	<form name="product-form" action="" method="post" id="formId">
