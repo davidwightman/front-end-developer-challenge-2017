@@ -59,42 +59,16 @@ module.exports = function(grunt) {
 			options: {
 				keepSpecialComments: 0
 			},
-			minify: {
-				expand: true,
-				cwd: 'css',
-				src: ['*.css', '!*.min.css', '*.scss'],
-				dest: 'build/css',
-				ext: '.min.css'
-			},
-			target: {
+			combine: {
 				files: {
-					'build/css/main.min.css': ['css/main.css', 'css/normalize.css', 'sassmain.css']
+					'build/css/main.min.css': ['css/main.css', 'css/normalize.css', 'css/sassmain.css']
 				}
 			}
 		},
 
-		// cssmin: {
-		// 	target: {
-		// 		files: [
-		// 			{
-		// 				expand: true,
-		// 				cwd: 'css',
-		// 				src: ['*.css', '!*.min.css', '*.scss'],
-		// 				dest: 'build/css',
-		// 				ext: '.min.css'
-		// 			}
-		// 		],
-		// 		combine: {
-		// 			files: {
-		// 				'build/css/main.min.css': ['css/main.css', 'css/normalize.css', 'sassmain.css']
-		// 			}
-		// 		}
-		// 	}
-		// },
-
 		uglify: {
 			build: {
-				src: ['js/*.js'],
+				src: ['js/*.js', 'js/vendor/*.min.js'],
 				dest: 'build/js/main.min.js'
 			}
 		},
@@ -105,7 +79,7 @@ module.exports = function(grunt) {
 				tasks: ['sass', 'postcss', 'cssmin']
 			},
 			js: {
-				files: '**/*.js',
+				files: ['**/*.js', 'js/vendor/*.min.js'],
 				tasks: ['uglify']
 			}
 		}

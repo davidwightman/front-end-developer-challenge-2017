@@ -8,29 +8,21 @@ $(document).ready(function() {
 		$('#shipping-company').show(1000);
 	});
 
+	//Get city and state from zip with WSJ API
 	var $state = $('#stateId');
 	var $city = $('#city');
 	var $zip = $('#zip');
 
 	$zip.on('input', function() {
-		//console.log(dInput);
 		var zipLength = this.selectionEnd;
-		console.log(zipLength);
-		//$(".dDimension:contains('" + dInput + "')").css("display","block");
 
 		if (zipLength === 5) {
 			$.ajax({
 				type: 'GET',
 				url: 'https://www.wsjwine.com/api/address/zipcode/' + $zip.val(),
 				success: function(data) {
-					console.log('sucess', data);
-					//if ($zip.val().toString.length >= 5)
-
 					$zip.on('input', function() {
 						var dInput = this.value;
-						console.log(dInput);
-
-						//$(".dDimension:contains('" + dInput + "')").css("display","block");
 					});
 
 					$zip.change(function() {
@@ -39,57 +31,41 @@ $(document).ready(function() {
 						$city.val($city.val() + data.response.city);
 						$state.val(data.response.stateCode);
 					});
-					//$city.val.append('hello');
-
-					// $.each(zips, function(i, zip) {
-					// 	$zips.append('<div> +zip.response.zipCode');
-					// });
 				}
 			});
 		}
 	});
 
-	//promotion
+	//GET red wine with promotion API
 	var promotionTemplate = $('#promotionTemplate').html();
-	console.log('prTemp', promotionTemplate);
 
 	$.ajax({
 		type: 'GET',
 		url: 'https://www.wsjwine.com/api/offer/9183007',
 		success: function(data) {
-			console.log('sucess', data.response.mainItems[0].product.smallImage);
+			//create a new array with only the colourName Red
+			var newArray = [];
+			for (i = 0; i < data.response.mainItems.length; i++) {
+				if (data.response.mainItems[i].product.colourName === 'Red') {
+					newArray.push(data.response.mainItems[i]);
+				}
+			}
+			var newObject = {};
+			newObject.mainItems = newArray;
 
 			var compiledPromotionTemplate = Handlebars.compile(promotionTemplate);
 
-			$('.promotion-list-container').html(compiledPromotionTemplate(data.response));
+			$('.promotion-list-container').html(compiledPromotionTemplate(newObject));
 		}
 	});
-
-	//https://www.wsjwine.com/api/address/zipcode/11201
-
-	// $('.application-form').submit(function(e)
-	//     {
-	//         e.preventDefault();
-	//         $.cookie('agreed_to_terms', '1', { path: '/', expires: 999999 });
-	//     });
-
-	// //on submit
-	//   $('#submit-form').click(function(e) {
-
-	//        var email = $('#email-address').val();
-	//        var emailConfirm = $('#email-address-confirm').val();
-	//        var state = $( "#stateId option:selected" ).val();
-	//        var phoneNumber = $('#phone').val();
-
-	//        //check to make sure email is there
-	//        if ($.trim(email).length == 0) {
-	//        	e.preventDefault();
-	//            alert('Please enter an email address');
-	//            throw (new Error('Not an email address'));
-	//        }
-
-	//    });
 });
+
+// Initialize Firebase cloud database for form content
+var config = {};
+firebase.initializeApp(config);
+
+//reference messages collection
+var messagesRef = firebase.database().ref('messages');
 
 //phone validation regex
 function validatePhone(phoneNumber) {
@@ -111,9 +87,7 @@ function validateEmail(email) {
 	}
 }
 
-////
-// If State value is equal to NY, CA, or MA - show a message on submit saying that we are unable to ship wine to those states and hide submit button. If different state is chosen, onblur - check against eligible states and if can ship to then re-enable submit button.
-//show submit button after user reselects a state. Hides Alert.
+// check to see if state is one of the 3 we don't ship to
 function doWeShip(value) {
 	var submitForm = document.getElementById('submit-form');
 	var stateAlert = document.getElementById('stateAlert');
@@ -131,12 +105,13 @@ window.onload = function() {
 	};
 };
 
-//Get all values from form inputs and store in an array. Hide completed form and use values in array and format as (below) on the page in place of the form.
+//Array for form inputs
 var newArray = [];
 
+//submit click
 document.getElementById('submit-form').onclick = function(e) {
 	e.preventDefault();
-
+	var submit = document.getElementById('submit-form');
 	var confirm = document.getElementById('confirm');
 	var form = document.getElementById('formId');
 	var emailAddress = document.getElementById('email-address').value;
@@ -186,6 +161,9 @@ document.getElementById('submit-form').onclick = function(e) {
 		console.log('User entered in ' + phone + '.');
 		throw new Error('Invalid US phone number.');
 	}
+
+	submit.style.display = 'none';
+	loading.style.display = 'block';
 
 	console.log(
 		'email: ' +
@@ -239,35 +217,59 @@ document.getElementById('submit-form').onclick = function(e) {
 	newArray.push(commercial);
 	newArray.push(company);
 
-	//document.cookie = "email=email"
-	//alert(document.cookie);
-
+	//show confirmation alert message on submit
 	confirm.style.display = 'block';
+	//hide form
 	form.style.display = 'none';
-
 	document.getElementById('screen').innerHTML = newArray.join('<br>');
+
+	//save message call
+	saveMessage(
+		emailAddress,
+		firstName,
+		lastName,
+		address1,
+		address2,
+		city,
+		state,
+		zip,
+		phone,
+		residential,
+		commercial,
+		company
+	);
+	//hide loading message
+	loading.style.display = 'none';
 };
 
-////GEOLOCATION!!!!!!
-// var options = {
-//   enableHighAccuracy: true,
-//   timeout: 5000,
-//   maximumAge: 0
-// };
-
-// function success(pos) {
-//   var crd = pos.coords;
-
-//   console.log('Your current position is:');
-//   console.log(`Latitude : ${crd.latitude}`);
-//   console.log(`Longitude: ${crd.longitude}`);
-//   //console.log(`state: ${crd.address_components[2].short_name}`);
-//   console.log(`More or less ${crd.accuracy} meters.`);
-// };
-
-// function error(err) {
-//   console.warn(`ERROR(${err.code}): ${err.message}`);
-// };
-
-// navigator.geolocation.getCurrentPosition(success, error, options);
-////
+//save message to firebase
+function saveMessage(
+	emailAddress,
+	firstName,
+	lastName,
+	address1,
+	address2,
+	city,
+	state,
+	zip,
+	phone,
+	residential,
+	commercial,
+	company
+) {
+	var newMessageRef = messagesRef.push();
+	newMessageRef.set({
+		emailAddress: emailAddress,
+		firstName: firstName,
+		lastName: lastName,
+		address1: address1,
+		address2: address2,
+		city: city,
+		state: state,
+		zip: zip,
+		phone: phone,
+		residential: residential,
+		commercial: commercial,
+		company: company
+	});
+}
